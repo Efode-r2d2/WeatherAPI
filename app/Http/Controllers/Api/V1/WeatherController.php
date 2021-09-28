@@ -24,7 +24,8 @@ class WeatherController extends Controller
         $this->save($request,$response);
         return response(["Status"=>true,
             "Data"=>["temp"=>$response->data[0]->temp,
-            "desc"=>$response->data[0]->weather->description]]);
+                "desc"=>$response->data[0]->weather->description]
+        ]);
     }
     /**
      * fetch weather data in a form of json
@@ -44,7 +45,7 @@ class WeatherController extends Controller
             'lat'=>$request->input('lat'),
             'lon'=>$request->input('lon'),
             'temp'=>$response->data[0]->temp,
-            'desc'=>$response->data[0]->temp
+            'desc'=>$response->data[0]->weather->description
         ]);
     }
 }

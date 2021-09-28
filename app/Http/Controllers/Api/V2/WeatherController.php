@@ -13,7 +13,7 @@ class WeatherController extends Controller
      /**
      *  API Key from weatherbit
      */ 
-    protected $api_key = '533215067e4645bfb6d09a0c40f3f91a';
+    protected $api_key = '6f8d9a6db9f4c2b5b1ab1375dab518bb';
     /**
      *  fetch weather data based on user location from weather bit,
      *  save the request data and
@@ -21,16 +21,21 @@ class WeatherController extends Controller
      */
     public function index(WeatherRequest $request){
         $response = $this->fetch($request);
-        return $response;
+        $this->save($request,$response);
         return response(["Status"=>true,
-            "Data"=>["temp"=>$response->data[0]->temp,
-            "desc"=>$response->data[0]->weather->description]]);
+            "Data"=>["temp"=>$response->main->temp,
+                "desc"=>$response->weather[0]->description]
+            ]);
     }
     /**
      * fetch weather data
      */
     private function fetch(WeatherRequest $request){
-        $response = Http::get('api.openweathermap.org/data/2.5/weather?q=London,uk&appid=6f8d9a6db9f4c2b5b1ab1375dab518bb');
+        $response = Http::get('api.openweathermap.org/data/2.5/weather?lat='.
+            $request->input('lat').'&lon='.
+            $request->input('lon').'&units='.
+            $request->input('unit').'&appid='.
+            $this->api_key);
         return json_decode($response);
     }
     /**
@@ -40,8 +45,8 @@ class WeatherController extends Controller
         Weather::create([
             'lat'=>$request->input('lat'),
             'lon'=>$request->input('lon'),
-            'temp'=>$response->data[0]->temp,
-            'desc'=>$response->data[0]->temp
+            'temp'=>$response->main->temp,
+            'desc'=>$response->weather[0]->description
         ]);
     }
 }
